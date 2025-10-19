@@ -2,11 +2,15 @@ export interface Revision {
   checked: boolean;
   notes: string;
   time: string;
+  isDrafting?: boolean;
+  isEstimating?: boolean;
+  draftingRate?: number;
 }
 
 export interface Job {
   id: string | number;
   customer: string;
+  jobName?: string;
   jobNumber: string;
   date: string;
   revisions: {

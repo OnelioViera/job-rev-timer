@@ -19,14 +19,15 @@ const revisionKeys: RevisionKey[] = ['submittal', 'rev1', 'rev2', 'rev3', 'rev4'
 
 export function JobForm({ editingJob, onSave, onCancel }: JobFormProps) {
   const [customer, setCustomer] = useState('');
+  const [jobName, setJobName] = useState('');
   const [jobNumber, setJobNumber] = useState('');
   const [date, setDate] = useState('');
   const [revisions, setRevisions] = useState<Job['revisions']>({
     submittal: { checked: false, notes: '', time: '00:00:00' },
-    rev1: { checked: false, notes: '', time: '00:00:00' },
-    rev2: { checked: false, notes: '', time: '00:00:00' },
-    rev3: { checked: false, notes: '', time: '00:00:00' },
-    rev4: { checked: false, notes: '', time: '00:00:00' },
+    rev1: { checked: false, notes: '', time: '00:00:00', isDrafting: false, isEstimating: false, draftingRate: 0 },
+    rev2: { checked: false, notes: '', time: '00:00:00', isDrafting: false, isEstimating: false, draftingRate: 0 },
+    rev3: { checked: false, notes: '', time: '00:00:00', isDrafting: false, isEstimating: false, draftingRate: 0 },
+    rev4: { checked: false, notes: '', time: '00:00:00', isDrafting: false, isEstimating: false, draftingRate: 0 },
   });
   const [formKey, setFormKey] = useState(0); // Key to force re-render of revision items
 
@@ -35,9 +36,42 @@ export function JobForm({ editingJob, onSave, onCancel }: JobFormProps) {
   useEffect(() => {
     if (editingJob) {
       setCustomer(editingJob.customer);
+      setJobName(editingJob.jobName || '');
       setJobNumber(editingJob.jobNumber);
       setDate(editingJob.date);
-      setRevisions(editingJob.revisions);
+      
+      // Ensure all revisions have the new fields with defaults
+      const updatedRevisions = {
+        submittal: {
+          ...editingJob.revisions.submittal,
+        },
+        rev1: {
+          ...editingJob.revisions.rev1,
+          isDrafting: editingJob.revisions.rev1.isDrafting ?? false,
+          isEstimating: editingJob.revisions.rev1.isEstimating ?? false,
+          draftingRate: editingJob.revisions.rev1.draftingRate ?? 0,
+        },
+        rev2: {
+          ...editingJob.revisions.rev2,
+          isDrafting: editingJob.revisions.rev2.isDrafting ?? false,
+          isEstimating: editingJob.revisions.rev2.isEstimating ?? false,
+          draftingRate: editingJob.revisions.rev2.draftingRate ?? 0,
+        },
+        rev3: {
+          ...editingJob.revisions.rev3,
+          isDrafting: editingJob.revisions.rev3.isDrafting ?? false,
+          isEstimating: editingJob.revisions.rev3.isEstimating ?? false,
+          draftingRate: editingJob.revisions.rev3.draftingRate ?? 0,
+        },
+        rev4: {
+          ...editingJob.revisions.rev4,
+          isDrafting: editingJob.revisions.rev4.isDrafting ?? false,
+          isEstimating: editingJob.revisions.rev4.isEstimating ?? false,
+          draftingRate: editingJob.revisions.rev4.draftingRate ?? 0,
+        },
+      };
+      
+      setRevisions(updatedRevisions);
       setFormKey(prev => prev + 1); // Force re-render of revision items
       formRef.current?.scrollIntoView({ behavior: 'smooth' });
     } else {
@@ -58,6 +92,7 @@ export function JobForm({ editingJob, onSave, onCancel }: JobFormProps) {
     const job = {
       ...(editingJob?.id && { id: editingJob.id }),
       customer,
+      jobName,
       jobNumber,
       date,
       revisions,
@@ -67,30 +102,32 @@ export function JobForm({ editingJob, onSave, onCancel }: JobFormProps) {
 
     // Clear form and reset timers
     setCustomer('');
+    setJobName('');
     setJobNumber('');
     const today = new Date().toISOString().split('T')[0];
     setDate(today);
     setRevisions({
       submittal: { checked: false, notes: '', time: '00:00:00' },
-      rev1: { checked: false, notes: '', time: '00:00:00' },
-      rev2: { checked: false, notes: '', time: '00:00:00' },
-      rev3: { checked: false, notes: '', time: '00:00:00' },
-      rev4: { checked: false, notes: '', time: '00:00:00' },
+      rev1: { checked: false, notes: '', time: '00:00:00', isDrafting: false, isEstimating: false, draftingRate: 0 },
+      rev2: { checked: false, notes: '', time: '00:00:00', isDrafting: false, isEstimating: false, draftingRate: 0 },
+      rev3: { checked: false, notes: '', time: '00:00:00', isDrafting: false, isEstimating: false, draftingRate: 0 },
+      rev4: { checked: false, notes: '', time: '00:00:00', isDrafting: false, isEstimating: false, draftingRate: 0 },
     });
     setFormKey(prev => prev + 1); // Force re-render to reset all timers
   };
 
   const handleCancel = () => {
     setCustomer('');
+    setJobName('');
     setJobNumber('');
     const today = new Date().toISOString().split('T')[0];
     setDate(today);
     setRevisions({
       submittal: { checked: false, notes: '', time: '00:00:00' },
-      rev1: { checked: false, notes: '', time: '00:00:00' },
-      rev2: { checked: false, notes: '', time: '00:00:00' },
-      rev3: { checked: false, notes: '', time: '00:00:00' },
-      rev4: { checked: false, notes: '', time: '00:00:00' },
+      rev1: { checked: false, notes: '', time: '00:00:00', isDrafting: false, isEstimating: false, draftingRate: 0 },
+      rev2: { checked: false, notes: '', time: '00:00:00', isDrafting: false, isEstimating: false, draftingRate: 0 },
+      rev3: { checked: false, notes: '', time: '00:00:00', isDrafting: false, isEstimating: false, draftingRate: 0 },
+      rev4: { checked: false, notes: '', time: '00:00:00', isDrafting: false, isEstimating: false, draftingRate: 0 },
     });
     setFormKey(prev => prev + 1); // Force re-render to reset all timers
     onCancel();
@@ -110,7 +147,7 @@ export function JobForm({ editingJob, onSave, onCancel }: JobFormProps) {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
           <div className="space-y-2">
             <Label htmlFor="customer" className="text-sm font-semibold uppercase text-gray-700">
               Customer
@@ -122,6 +159,18 @@ export function JobForm({ editingJob, onSave, onCancel }: JobFormProps) {
               value={customer}
               onChange={(e) => setCustomer(e.target.value)}
               required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="jobName" className="text-sm font-semibold uppercase text-gray-700">
+              Job Name <span className="text-xs text-gray-500">(Optional)</span>
+            </Label>
+            <Input
+              id="jobName"
+              type="text"
+              placeholder="Enter job name"
+              value={jobName}
+              onChange={(e) => setJobName(e.target.value)}
             />
           </div>
           <div className="space-y-2">
@@ -161,6 +210,9 @@ export function JobForm({ editingJob, onSave, onCancel }: JobFormProps) {
                 checked={revisions[key].checked}
                 notes={revisions[key].notes}
                 time={revisions[key].time}
+                isDrafting={revisions[key].isDrafting}
+                isEstimating={revisions[key].isEstimating}
+                draftingRate={revisions[key].draftingRate}
                 onCheckedChange={(checked) =>
                   setRevisions((prev) => ({
                     ...prev,
@@ -177,6 +229,24 @@ export function JobForm({ editingJob, onSave, onCancel }: JobFormProps) {
                   setRevisions((prev) => ({
                     ...prev,
                     [key]: { ...prev[key], time },
+                  }))
+                }
+                onDraftingChange={(isDrafting) =>
+                  setRevisions((prev) => ({
+                    ...prev,
+                    [key]: { ...prev[key], isDrafting },
+                  }))
+                }
+                onEstimatingChange={(isEstimating) =>
+                  setRevisions((prev) => ({
+                    ...prev,
+                    [key]: { ...prev[key], isEstimating },
+                  }))
+                }
+                onDraftingRateChange={(draftingRate) =>
+                  setRevisions((prev) => ({
+                    ...prev,
+                    [key]: { ...prev[key], draftingRate },
                   }))
                 }
               />
