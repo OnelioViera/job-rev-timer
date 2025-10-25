@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 export default function Home() {
   const { jobs, isLoading, error, addJob, updateJobById, deleteJobById } = useJobs();
   const [editingJob, setEditingJob] = useState<Job | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const handleSaveJob = async (job: Job) => {
     try {
@@ -24,6 +25,7 @@ export default function Home() {
         await addJob(job);
         toast.success('Job saved successfully!');
       }
+      setIsFormOpen(false); // Close form after saving
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to save job');
     }
@@ -31,10 +33,12 @@ export default function Home() {
 
   const handleEditJob = (job: Job) => {
     setEditingJob(job);
+    setIsFormOpen(true); // Open form when editing
   };
 
   const handleCancelEdit = () => {
     setEditingJob(null);
+    setIsFormOpen(false); // Close form when canceling
   };
 
   const handleDeleteJob = (jobId: string | number) => {
@@ -104,11 +108,29 @@ export default function Home() {
           📋 Job Tracker
         </h1>
 
-        <JobForm
-          editingJob={editingJob}
-          onSave={handleSaveJob}
-          onCancel={handleCancelEdit}
-        />
+        {/* Create New Job Button */}
+        {!isFormOpen && (
+          <div className="mb-8 flex justify-center">
+            <button
+              onClick={() => setIsFormOpen(true)}
+              className="bg-white hover:bg-gray-50 text-[#667eea] font-bold py-4 px-8 rounded-xl shadow-2xl hover:shadow-3xl transition-all hover:scale-105 flex items-center gap-3 text-lg"
+            >
+              <span className="text-2xl">➕</span>
+              Create New Job
+            </button>
+          </div>
+        )}
+
+        {/* Collapsible Job Form */}
+        {isFormOpen && (
+          <div className="animate-in slide-in-from-top duration-300">
+            <JobForm
+              editingJob={editingJob}
+              onSave={handleSaveJob}
+              onCancel={handleCancelEdit}
+            />
+          </div>
+        )}
 
         <div className="bg-white rounded-2xl p-8 shadow-2xl">
           <h2 className="text-3xl font-bold text-gray-800 mb-6 pb-3 border-b-2 border-[#667eea]">

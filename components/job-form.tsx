@@ -139,11 +139,21 @@ export function JobForm({ editingJob, onSave, onCancel }: JobFormProps) {
         <h2 className="text-3xl font-bold text-gray-800 border-b-2 border-[#667eea] pb-2">
           {editingJob ? 'Edit Job' : 'Add New Job'}
         </h2>
-        {editingJob && (
-          <span className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg text-sm font-semibold">
-            ✏️ Editing Job
-          </span>
-        )}
+        <div className="flex items-center gap-3">
+          {editingJob && (
+            <span className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg text-sm font-semibold">
+              ✏️ Editing Job
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="text-gray-400 hover:text-gray-600 transition-colors text-2xl font-bold w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100"
+            title="Close form"
+          >
+            ✕
+          </button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit}>
