@@ -78,19 +78,34 @@ export default function Home() {
   }
 
   if (error) {
+    const isProduction = process.env.NODE_ENV === 'production';
+    
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center p-5">
         <div className="bg-white rounded-2xl p-8 max-w-2xl shadow-2xl">
           <h2 className="text-2xl font-bold text-red-600 mb-4">⚠️ MongoDB Connection Error</h2>
           <p className="text-gray-700 mb-4">{error}</p>
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
-            <p className="text-sm text-yellow-800 font-semibold mb-2">To fix this issue:</p>
-            <ol className="list-decimal list-inside text-sm text-yellow-800 space-y-1">
-              <li>Open your <code className="bg-yellow-100 px-1 rounded">.env.local</code> file</li>
-              <li>Replace <code className="bg-yellow-100 px-1 rounded">&lt;db_password&gt;</code> with your actual MongoDB password</li>
-              <li>Restart the development server (Ctrl+C, then npm run dev)</li>
-            </ol>
-          </div>
+          
+          {isProduction ? (
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+              <p className="text-sm text-yellow-800 font-semibold mb-2">Deployment Checklist:</p>
+              <ol className="list-decimal list-inside text-sm text-yellow-800 space-y-1">
+                <li>Add <code className="bg-yellow-100 px-1 rounded">MONGODB_URI</code> in Vercel Environment Variables</li>
+                <li>Whitelist all IPs (0.0.0.0/0) in MongoDB Atlas Network Access</li>
+                <li>Redeploy your application after adding environment variables</li>
+              </ol>
+            </div>
+          ) : (
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+              <p className="text-sm text-yellow-800 font-semibold mb-2">To fix this issue:</p>
+              <ol className="list-decimal list-inside text-sm text-yellow-800 space-y-1">
+                <li>Open your <code className="bg-yellow-100 px-1 rounded">.env.local</code> file</li>
+                <li>Replace <code className="bg-yellow-100 px-1 rounded">&lt;db_password&gt;</code> with your actual MongoDB password</li>
+                <li>Restart the development server (Ctrl+C, then npm run dev)</li>
+              </ol>
+            </div>
+          )}
+          
           <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
             <p className="text-sm text-blue-800">
               📖 Check <code className="bg-blue-100 px-1 rounded">MONGODB_SETUP.md</code> for detailed setup instructions.
